@@ -1,111 +1,72 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Data;
 
-namespace relearn
+namespace tugas_Desktop
 {
-    class Program
+    public partial class NoteTaker : Form
     {
-        static void Main(string[] args)
+        DataTable notes = new DataTable();
+        bool editing = false;
+        public NoteTaker()
         {
-            //Deklarasi variabel
-            int jumlah, ganti, hapus, cari;
-            int ketemu = 0, posisi = 0;
-            int[] B=new int[10];
-            char pilih;
+            InitializeComponent();
+        }
 
-        atas:
-            //input jumlah indeks data
-            Console.WriteLine("Masukkan Jumlah Data");
-            jumlah = Convert.ToInt32(Console.ReadLine());
-            if (jumlah > 10)
+        private void NoteTaker_Load(object sender, EventArgs e)
+        {
+            notes.Columns.Add("Title");
+            notes.Columns.Add("Note");
+
+            previousnotes.DataSource = notes;
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void savebutton_Click(object sender, EventArgs e)
+        {
+            if(editing)
             {
-                //Kode yang di eksekusi jika indeks >10
-                Console.WriteLine("Maaf jumlah maksimal 10 data");
-                goto atas;
+                notes.Rows[previousnotes.CurrentCell.RowIndex]["title"] = titlebox.Text;
+                notes.Rows[previousnotes.CurrentCell.RowIndex]["title"] = notebox.Text;
             }
             else
             {
-                //input data
-                for (int i = 0; i < jumlah; i++)
-                {
-                    Console.Write("Masukkan data ke {0} = ", i + 1);
-                    B[i] = Convert.ToInt32(Console.ReadLine());
-
-                }
-                Console.WriteLine("\n\nOK, Luangkan waktu sejenak, Berikut adalah hasilnya");
-                //menampilkan data
-                for (int j = 0; j < jumlah; j++)
-                {
-                    Console.WriteLine("B[{0}]={1}", j, B[j]);
-                }
+                notes.Rows.Add(titlebox.Text, notebox.Text);
             }
-            
-        menu:
-            Console.WriteLine("\n\n[E] Edit Data\t[H] Hapus Data\t[C] Cari Data\t[X] Selesai");
-            pilih = Convert.ToChar((Console.ReadLine().ToLower()));
-            if (pilih == 'e')
-            {
-                //Kode untuk mengedit disini
-                Console.Write("\n\nMasukkan Data yang akan Diedit = ");
-                ganti = Convert.ToInt32(Console.ReadLine());
-                for (int g = 0; g < jumlah; g++)
-                {
-                    if (B[g] == ganti)
-                    {
-                        Console.Write("Masukkan Data Baru = ");
-                        B[g] = Convert.ToInt32(Console.ReadLine());
-                        Console.WriteLine("\n\nData Setelah Diedit = ");
-                        for (int h = 0; h < jumlah; h++)
-                        {
-                            Console.WriteLine("B[{0}] = {1}", h, B[h]);
-                        }
-                    }
-                }
-                goto menu;
-            }
-            else if (pilih == 'h')
-            {
-                //Kode Untuk menghapus disini
-                Console.Write("\n\nMasukkan index data yang akan dihapus = ");
-                hapus = Convert.ToInt32(Console.ReadLine());
-                for (int p = hapus; p < jumlah; p++)
-                {
-                    B[p] = B[p + 1];
-                    jumlah -= 1;
-                }
-                Console.Write("Data Baru = \n");
-                for (int p = 0; p < jumlah; p++)
-                {
-                    Console.WriteLine("B[{0}] = {1}", p, B[p]);
-                }
-                goto menu;
-            }
-            else if (pilih == 'c')
-            {
-                //kode untuk mencari disini
-                Console.Write("\n\nData Yang akan dicari = ");
-                cari = Convert.ToInt32(Console.ReadLine());
-                for (int n = 0; n < jumlah; n++)
-                {
-                    if (cari == B[n])
-                    {
-                        ketemu = 1;
-                        posisi = n;
-                        Console.WriteLine("Data {0} Ditemukan Di Posisi {1}", cari, n);
-                    }
-                }
-                if (ketemu == 0)
-                {
-                    Console.WriteLine("Maaf Data yang kamu cari tidak ada.");
-                }
-                goto menu;
-            }
-            else Console.WriteLine("Terimakasih\n\n");
-            Console.WriteLine();
+            titlebox.Text = "";
+            notebox.Text = "";
+            editing = false;
         }
 
+        private void deletebutton_Click(object sender, EventArgs e)
+        {
+               try
+            {
+                notes.Rows[previousnotes.CurrentCell.RowIndex].Delete();
+            }
+            catch(Exception ex) { Console.WriteLine("Not a Valid not");  }
+        }
+
+        private void loadbutton_Click(object sender, EventArgs e)
+        {
+            titlebox.Text = notes.Rows[previousnotes.CurrentCell.RowIndex].ItemArray[0].ToString();
+            notebox.Text = notes.Rows[previousnotes.CurrentCell.RowIndex].ItemArray[1].ToString();
+            editing = true;     
+        }
+
+        private void newbutton_Click(object sender, EventArgs e)
+        {
+            titlebox.Text = "";
+            notebox.Text = "";
+        }
+
+        private void previousnotes_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            titlebox.Text = notes.Rows[previousnotes.CurrentCell.RowIndex].ItemArray[0].ToString();
+            notebox.Text = notes.Rows[previousnotes.CurrentCell.RowIndex].ItemArray[1].ToString();
+            editing = true;
+        }
     }
 }
